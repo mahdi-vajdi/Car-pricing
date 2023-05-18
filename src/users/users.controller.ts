@@ -8,6 +8,7 @@ import {
   Patch,
   Post,
   Query,
+  Session,
 } from '@nestjs/common';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UsersService } from './users.service';
@@ -24,14 +25,34 @@ export class UsersController {
     private readonly authService: AuthService,
   ) {}
 
+  @Get('whoami')
+  whoAmI(@Session() session: any) {
+    return this.usersService.findOneById(session.userId);
+  }
+
+  @Post('signout')
+  signout(@Session() session: any) {
+    return (session.userId = null);
+  }
+
   @Post('signup')
-  createUser(@Body() { email, password }: CreateUserDto) {
-    return this.authService.signup(email, password);
+  async createUser(
+    @Body() { email, password }: CreateUserDto,
+    @Session() session: any,
+  ) {
+    const user = await this.authService.signup(email, password);
+    session.userId = user.id;
+    return user;
   }
 
   @Post('signin')
-  signin(@Body() { email, password }: CreateUserDto) {
-    return this.authService.signin(email, password);
+  async signin(
+    @Body() { email, password }: CreateUserDto,
+    @Session() session: any,
+  ) {
+    const user = await this.authService.signin(email, password);
+    session.userId = user.id;
+    return user;
   }
 
   @Get()
