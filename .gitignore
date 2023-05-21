@@ -34,4 +34,7 @@ lerna-debug.log*
 !.vscode/tasks.json
 !.vscode/launch.json
 !.vscode/extensions.json
-db.sqlite
+
+# Evironment variables
+.env.development
+.env.test
