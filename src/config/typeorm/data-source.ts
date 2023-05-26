@@ -1,16 +1,20 @@
 import { DataSource, DataSourceOptions } from 'typeorm';
 
 const developmentConfig: DataSourceOptions = {
-  type: 'sqlite',
-  database: 'db.sqlite',
-  entities: ['**/*.entity.js'],
-  migrations: ['database/migrations/*.js'],
+  type: 'postgres',
+  host: '127.0.0.1',
+  port: 5432,
+  username: 'postgres',
+  password: 'postgre123',
+  database: 'car-pricing-db',
+  // entities: ['**/*.entity.js'],
+  migrations: ['src/config/migrations/*.js'],
 };
 
 const testConfig: DataSourceOptions = {
   type: 'sqlite',
   database: 'test.sqlite',
-  entities: ['**/*.entity.ts'],
+  // entities: ['**/*.entity.ts'],
   migrations: ['database/migrations/*.ts'],
   migrationsRun: true,
 };
@@ -18,12 +22,11 @@ const testConfig: DataSourceOptions = {
 const productionConfig: DataSourceOptions = {
   type: 'postgres',
   url: process.env.DATABASE_URL,
-  entities: ['**/*.entity.js'],
-  migrations: ['database/migrations/*.js'],
+  migrations: ['dist/config/migrations/*.js'],
   migrationsRun: true,
-  ssl: {
-    rejectUnauthorized: false,
-  },
+  // ssl: {
+  //   rejectUnauthorized: false,
+  // },
 };
 
 export let dataSourceOptions: DataSourceOptions;

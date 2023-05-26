@@ -36,8 +36,8 @@ lerna-debug.log*
 !.vscode/extensions.json
 
 # Evironment variables
-.env.development
-.env.test
+.env.*
+liara.json
 
 # Development and Test databases
 db.sqlite
