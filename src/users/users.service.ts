@@ -1,44 +1,49 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
-import { Repository } from 'typeorm';
-import { User } from './user.entity';
+import {
+  Injectable,
+  UnauthorizedException,
+  UnprocessableEntityException,
+} from '@nestjs/common';
+import { CreateUserDto } from './dto/create-user.dto';
+import * as bcrypt from 'bcryptjs';
+import { EntityManager, Repository } from 'typeorm';
+import { User } from './entities/user.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 
 @Injectable()
 export class UsersService {
   constructor(
-    @InjectRepository(User) private readonly repo: Repository<User>,
+    @InjectRepository(User) private readonly usersRepository: Repository<User>,
+    private readonly entityManager: EntityManager,
   ) {}
 
-  create(email: string, password: string) {
-    const user = this.repo.create({ email, password });
-
-    return this.repo.save(user);
+  async create(createUserDto: CreateUserDto): Promise<User> {
+    await this.validateCreateUserDto(createUserDto);
+    const user = new User({
+      ...createUserDto,
+      password: await bcrypt.hash(createUserDto.password, 10),
+    });
+    return this.entityManager.save(user);
   }
 
-  findOneById(id: number) {
-    if (!id) return null;
-    return this.repo.findOneBy({ id });
+  async findOneByEmail(email: string): Promise<User> {
+    return this.usersRepository.findOneBy({ email });
   }
 
-  findByEmail(email: string) {
-    return this.repo.findBy({ email });
+  async verifyUser(email: string, password: string): Promise<User> {
+    const user = await this.findOneByEmail(email);
+    if (!user) throw new UnauthorizedException('Credintials are not valid');
+
+    const passwordValid = await bcrypt.compare(password, user.password);
+    if (!passwordValid)
+      throw new UnauthorizedException('Credintials are not valid');
+
+    return user;
   }
 
-  async update(id: number, attrs: Partial<User>) {
-    const user = await this.findOneById(id);
-    if (!user)
-      throw new NotFoundException(`There is no user with the id: ${id}`);
-
-    Object.assign(user, attrs);
-
-    return this.repo.save(user);
-  }
-
-  async remove(id: number) {
-    const user = await this.findOneById(id);
-    if (!user)
-      throw new NotFoundException(`There is no user with the id: ${id}`);
-
-    return this.repo.remove(user);
+  private async validateCreateUserDto(createUserDto: CreateUserDto) {
+    const user = await this.findOneByEmail(createUserDto.email);
+    if (user !== null)
+      throw new UnprocessableEntityException('Email Already Exists.');
+    return;
   }
 }

@@ -1,30 +1,32 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { EntityManager, Repository } from 'typeorm';
 import { Report } from './report.entity';
 import { CreateReportDto } from './dto/create-report.dto';
-import { User } from '../users/user.entity';
 import { GetEstimateDto } from './dto/get-estimate.dto';
+import { User } from 'src/users/entities/user.entity';
 
 @Injectable()
 export class ReportsService {
-  constructor(@InjectRepository(Report) private repo: Repository<Report>) {}
+  constructor(
+    @InjectRepository(Report) private reportsRepository: Repository<Report>,
+    private readonly entityManager: EntityManager,
+  ) {}
 
-  create(reportDto: CreateReportDto, user: User) {
-    const report = this.repo.create(reportDto);
-    report.user = user;
-    return this.repo.save(report);
+  async create(reportDto: CreateReportDto, user: User) {
+    const report = new Report({ ...reportDto, user });
+    return this.entityManager.save(report);
   }
 
   async changeApproval(id: number, approved: boolean) {
-    const report = await this.repo.findOneBy({ id });
+    const report = await this.reportsRepository.findOneBy({ id });
     if (!report) throw new NotFoundException('Report not found');
     report.approved = approved;
-    return this.repo.save(report);
+    return this.reportsRepository.save(report);
   }
 
   async getEstimate({ make, model, lng, lat, year, mileage }: GetEstimateDto) {
-    return this.repo
+    return this.reportsRepository
       .createQueryBuilder()
       .select('AVG(price)', 'price')
       .where('make = :make', { make })

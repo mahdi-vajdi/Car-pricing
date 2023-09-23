@@ -1,5 +1,5 @@
-import { Entity, Column, PrimaryGeneratedColumn, ManyToMany } from 'typeorm';
-import { User } from '../users/user.entity';
+import { User } from 'src/users/entities/user.entity';
+import { Entity, Column, PrimaryGeneratedColumn, ManyToOne } from 'typeorm';
 
 @Entity()
 export class Report {
@@ -30,6 +30,10 @@ export class Report {
   @Column()
   mileage: number;
 
-  @ManyToMany(() => User, (user) => user.reports)
+  @ManyToOne(() => User, (user) => user.reports)
   user: User;
+
+  constructor(report: Partial<Report>) {
+    Object.assign(this, report);
+  }
 }
