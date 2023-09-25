@@ -1,7 +1,7 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { EntityManager, Repository } from 'typeorm';
-import { Report } from './report.entity';
+import { Report } from './entities/report.entity';
 import { CreateReportDto } from './dto/create-report.dto';
 import { GetEstimateDto } from './dto/get-estimate.dto';
 import { User } from 'src/users/entities/user.entity';

@@ -1,10 +1,10 @@
-import { Report } from 'src/reports/report.entity';
+import { Report } from 'src/reports/entities/report.entity';
 import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
 
 @Entity()
 export class User {
   @PrimaryGeneratedColumn()
-  userId: number;
+  id: number;
 
   @Column()
   email: string;

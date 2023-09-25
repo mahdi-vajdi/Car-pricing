@@ -30,7 +30,7 @@ export class AuthService {
   signin(user: User): ResponseSignin {
     const payload: AuthPayload = {
       email: user.email,
-      sub: user.userId,
+      sub: user.id,
     };
 
     return {

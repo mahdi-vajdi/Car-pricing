@@ -18,10 +18,11 @@
     "test:cov": "cross-env NODE_ENV=test jest --coverage",
     "test:debug": "cross-env NODE_ENV=test node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand",
     "test:e2e": "cross-env NODE_ENV=test jest --config ./test/jest-e2e.json --maxWorkers=1",
-    "migration-generate:dev": "cross-env NODE_ENV=development typeorm migration:generate -d dist/config/typeorm/data-source.js --outputJs",
-    "migration-run:dev": "cross-env NODE_ENV=development typeorm migration:run -d dist/config/typeorm/data-source.js",
-    "migration-generate:prod": "cross-env NODE_ENV=production typeorm migration:generate -d dist/config/typeorm/data-source.js --outputJs",
-    "migration-run:prod": "cross-env NODE_ENV=production typeorm migration:run -d dist/config/typeorm/data-source.js"
+    "typeorm": "typeorm-ts-node-commonjs",
+    "typeorm:create-migration-dev":"typeorm-ts-node-commonjs migration:create ./migrations/$npm_config_name",
+    "typeorm:generate-migration-dev": "typeorm-ts-node-commonjs migration:generate -d ./dist/typeorm.config.js ./migrations/$npm_config_name",
+    "typeorm:run-migrations-dev": "typeorm-ts-node-commonjs migration:run -d dist/typeorm.config.js",
+    "typeorm:revert-migrations-dev": "typeorm-ts-node-commonjs migration:revert -d ./typeorm.config.ts"
   },
   "dependencies": {
     "@nestjs/common": "^9.4.3",
@@ -36,6 +37,7 @@
     "class-transformer": "^0.5.1",
     "class-validator": "^0.14.0",
     "cross-env": "^7.0.3",
+    "dotenv": "^16.3.1",
     "joi": "^17.10.2",
     "mysql2": "^3.6.1",
     "passport": "^0.6.0",
