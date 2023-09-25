@@ -1,6 +1,7 @@
 # compiled output
 /dist
 /node_modules
+liara.json
 .env
 
 # Logs
@@ -35,10 +36,6 @@ lerna-debug.log*
 !.vscode/tasks.json
 !.vscode/launch.json
 !.vscode/extensions.json
-
-# Evironment variables
-.env.*
-liara.json
 
 # Development and Test databases
 db.sqlite
